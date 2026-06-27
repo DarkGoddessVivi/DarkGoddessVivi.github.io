@@ -1,0 +1,44 @@
+body {
+    background-color: #fde5f5; /* Light pink */
+    color: #333; /* Dark gray */
+    font-family: 'Press Start 2P', cursive; /* Retro font */
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #f48fb1; /* Pink */
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    margin: 0;
+    font-size: 36px;
+}
+
+.content {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.madoka-image img {
+    width: 300px;
+    height: auto;
+    border-radius: 20px; /* Round corners */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+.cat-image img {
+    width: 300px;
+    height: auto;
+    border-radius: 20px; /* Round corners */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+footer {
+    background-color: #f48fb1; /* Pink */
+    padding: 20px;
+    text-align: center;
+}

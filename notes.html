@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>vivi notes</title>
+        <style>
+            #container {
+                width: 100%;
+                max-width: 1000px;
+            }
+            main {
+                max-width: 800px;
+                margin-left: 0;
+                margin-bottom: 50px;
+            }
+            main h1 {
+                text-align: center;
+                color: #fddcff;
+            }
+            main h2 {
+                color: #f1bcf7;
+            }
+            #container a {
+                color: #e884f5;
+            }
+            #leftSidebar a {
+                font-weight: bold;
+                color: #d835a7;
+            }
+            #leftSidebar {
+                position: fixed !important;
+            }
+            #filter-buttons {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+                margin-bottom: 16px;
+            }
+            #filter-buttons button {
+                opacity: 0.5;
+            }
+            #filter-buttons button.active {
+                opacity: 1;
+                font-weight: bold;
+            }
+            #no-results {
+                display: none;
+                font-style: italic;
+                color: #cccccc;
+            }
+            #note-img {
+                display: block;
+                margin: 10px auto;
+                max-width: 100%;
+                float: none;
+            }
+        </style>
+    </head>
+    <body>
+
+        <aside id="leftSidebar" style="margin-right: 10px;">
+            <img src="https://madoka.nekoweb.org/madoka%20cat%20meow.jpg" alt="Madoka Cat">
+            <a href="https://madoka.nekoweb.org" target="_blank" style="display: block; margin-left:55px;">home</a>
+            <h2>check out more of my life:</h2>
+            <ul>
+                <li><a href="https://madoka.nekoweb.org/photos.html" target="_blank">photos</a></li>
+                <li><a href="https://madoka.nekoweb.org/visualdiaries.html" target="_blank">visual diaries</a></li>
+                <li><a href="https://madoka.nekoweb.org/blog.html" target="_blank">blog</a></li>
+            </ul>
+        </aside>
+
+        <div id="container">
+            <div id="headerArea"></div>
+            <div id="flex">
+                <main>
+                    <h1>random notes</h1>
+                    <p id="note-counter"></p>
+
+                    <div id="filter-buttons">
+                        <button onclick="setFilter('all')" class="active">all</button>
+                        <button onclick="setFilter('dream')">dream</button>
+                        <button onclick="setFilter('list')">list</button>
+                        <button onclick="setFilter('journal')">journal</button>
+                        <button onclick="setFilter('misc')">misc</button>
+                    </div>
+
+                    <p id="no-results">no notes here yet...</p>
+
+                    <p class="date" id="note-date"></p>
+                    <h2 id="note-title"></h2>
+                    <p id="note-body"></p>
+                    <img id="note-img" src="" alt="">
+                    <br>
+                    <button id="reroll-btn" onclick="reroll()">reroll note</button>
+                </main>
+            </div>
+        </div>
+
+        <script>
+            const notes = [
+                {
+                    date: "11/22/25",
+                    title: "dream 11/22",
+                    body: "I had this weird scary dream that I now lived in this authoritarian state and I was holed up in a room with my friends and every so often military people would come and see if there was anyone illegal there and I was illegal for some reason maybe because I'm a fag or something. I wish I could remember more because it was this whole thing that felt super long but towards the end they were asking me about my league id and they mentioned mahiru and yeah... weird dream.",
+                    tag: "dream"
+                },
+                {
+                    date: "05/06/26",
+                    title: "anime watched w/ bestie",
+                    body: "Toradora\nMadoka\nSakurasou\nKimi no Na wa\nHunter x Hunter\nRe:Zero\nNo Game No Life\nMob Psycho\nKaguya\n86\nLink Click\nSuzume\nAngel Beats",
+                    tag: "list"
+                },
+                {
+                    date: "05/19/26",
+                    title: "priv drafts",
+                    body: "if i keep buying concert ticekts for stuff months in advance then ill never be able to kil myself #real #ljfehack\n\nmy guts are out they're crawling on  the florrr\n\nim definitely pulling up to kpop concerts with this\n\nkowai....\n\njoke doesn't hit the same when there's a real war going on\n\npoke is good\n\naw that's so cute\n\na lot of what fueled me to watch it\n\n-\n\nso cute\n\nthe bad times are here to make the good times just that much better. it's what pge said. it's so hard to believe while in the bad times, but he's right I think. that feeling of happiness and relief after a period of feeling like shit is unmatched.\n\nSo I got older, but why am I still so stupid?\nIt's like I can't see my own face, when I think about it\nI just wanted a little more timeBut I can't seem to take care\nOf myself\nWithout hurting someone else\n\npoints to the women's washroom and says they have a restroom for you OK MAN I GET IT THANK YOU",
+                    tag: "misc"
+                },
+                {
+                    date: "01/30/26",
+                    title: "valo name",
+                    body: "90 days from now change my alt name to cute imouto vv",
+                    tag: "misc"
+                },
+                {
+                    date: "12/13/25",
+                    title: "dream 12/13/25",
+                    body: "I dreamt about █████. we were at like a college together or on vacation together n we were hanging out n eating together n went on a walk",
+                    tag: "dream"
+                },
+                {
+                    date: "01/16/26",
+                    title: "albums",
+                    body: "nurture porter Robinson\nblonde frank ocean\nmbdtf kanye west\nbeatopia beabadoobee\neverything I know about love laufey\nballads 1 joji\neureka kinokoteikoku\nlove yourself: tear bts\nsomewhere city origami angel\ncollide with the sky ptv\nthe first glass beach album glass beach",
+                    tag: "list"
+                },
+                {
+                    date: "08/27/25",
+                    title: "3am",
+                    body: "I stayed up doing dumb shit on hypuixel with █████ like playing spleef and pvp for an hour it was loads of fun.",
+                    tag: "journal"
+                },
+                {
+                    date: "08/17/25",
+                    title: "high",
+                    body: "glasses under bed",
+                    tag: "misc"
+                },
+                {
+                    date: "08/16/25",
+                    title: "shopping list @ yosemite",
+                    body: "lactose free milk\n2 big things of water\nred peppers asian Thai chillies\n\n 55total",
+                    tag: "list"
+                },
+                {
+                    date: "07/04/25",
+                    title: "dream abt █████",
+                    body: "I dreamed about █████. we were playing osu I was watching her and told her she's insane. there was more but I can't remember.",
+                    tag: "dream"
+                },
+                {
+                    date: "06/08/25",
+                    title: "4:02am",
+                    body: "I miss my ██████████ so much.",
+                    tag: "journal"
+                },
+                {
+                    date: "05/31/25",
+                    title: "3 wishes",
+                    body: "Watch the new Madoka Magica movie with █████\nGo to Japan with █████\nLive with █████",
+                    tag: "list"
+                },
+                {
+                    date: "05/30/25",
+                    title: "dream 05/30/25",
+                    body: "I had a dream about a girl I knew in middle school. ██████. it was a reoccurring dream and we were on a field trip. it was like an emporium. I think we were dating. she was lovey dovey with me. I feel bad for █████ I feel like I cheated on her even though it's just a dream. I'm sorry.",
+                    tag: "dream"
+                },
+                {
+                    date: "05/09/25",
+                    title: "dream 05/09/25",
+                    body: "I had a dream that me and █████ were on vacation and we met this girl who really like piss and she would collect piss and we would pis in these vials for her and we had a cat and our cat would too and my dad was there and he was being an asshole like always and my brother was there too.",
+                    tag: "dream"
+                },
+                {
+                    date: "05/04/25",
+                    title: "12:30am",
+                    body: "█████ mumbled something in her sleep but idk what she said 12:30 am",
+                    tag: "journal"
+                },
+                {
+                    date: "04/21/25",
+                    title: "high",
+                    body: "good high. nothing kc note. little jealous and friends r dumb but I had fun and no super bad thoughts or spiraling. I just love █████████ and ███████████████. goodnight. wooden girl ██████████. 4/21/25 4:20 am lol",
+                    tag: "journal"
+                },
+                {
+                    date: "04/20/25",
+                    title: "dream 04/20/25",
+                    body: "I dreamed about █████. I forgot everything. I just know it was the best thing ever and I ████ her.",
+                    tag: "dream"
+                },
+                {
+                    date: "04/17/25",
+                    title: "journal 4/17",
+                    body: "last night I started feeling bad. a deep pit of anxiety because █████ wasn't feeling well either. I kept thinking if it was my fault. I made an impromptu decision to go out on a walk at midnight. I drove my car to the library 5 minutes away. I brought my newly used digital camera, packed a zyn, and walked to the main street. I joined my irls VC. they were of no help, but I didn't want to leave and be alone. I messaged ██████, she was asleep. my irls said I wasn't a cute girl. they said they hated me. they cursed at me. no one was there. I scrolled through my discord dms maybe about 100 times. I sent out tweets but everyone was asleep. I refreshed the notifications looking for someone. I just gave up and sat in silence in my car while the zyn started tasting terrible. I listened to sleep apnea by beach fossils until I had enough of the zyn and threw it out. I stayed in my car for maybe 30 minutes suffering wanting to throw up. I didn't want to go home but I had no where else to go. I was so paranoid about people. I drove home and turned off my computer. I changed and drank water and spat it out. the taste of the disgusting zyn was still there. I took a melatonin because I needed to sleep. I powered off my phone and the thoughts came rolling in. I grabbed my blahaj and started talking to it. my blahaj's name is █████. she's my favorite. I love her. I started telling her I love her and she loved me back. I told her I wanted to marry her and she said yes. I told her we would be together forever and she said yes. I fell asleep soon after.",
+                    tag: "journal"
+                },
+                {
+                    date: "04/19/25",
+                    title: "reminder",
+                    body: "2 pm Friday gf game",
+                    tag: "misc"
+                },
+                {
+                    date: "04/17/25",
+                    title: "dream 04/17/25",
+                    body: "I had a dream I was with my cousin ██████ and he was getting into balatro and we were talking about it and for some reason he brought up pge. I told him to watch the video PGE throws a balatro run. he just could not spell pge and kept typing in random things it was infuriating. I had to link it to him in a twitter reply and LiterallyMeGuy liked me tweet and then I woke up.",
+                    tag: "dream"
+                },
+                {
+                    date: "12/23/24",
+                    title: "dream 12/23/24",
+                    body: "I had a dream █████ told me ██████ lived in Austin Texas",
+                    tag: "dream"
+                },
+                {
+                    date: "01/02/25",
+                    title: "injection supplies",
+                    body: "1 ml syringe\n1 inch 25 gauge injection needles\n1.5 inch 21 gauge drawing needles\nalcohol prep pads\nbandaids",
+                    tag: "list"
+                },
+                {
+                    date: "08/19/25",
+                    title: "concerts",
+                    body: "twice - June 2023\nmikuexpo - April 2024\nslchld/pryvt - July 2024\nMass of The Fermenting Dregs - September 2024\nLamp - October 2024\nZedd (rave) - October 2024\nPorter Robinson - October 2024\nBixby - Nov 2024\nDabin (rave) - April 2025\nBabymetal - July 2025\nStar99 - Aug 2025\nSobs / Amanaguchi - September 2025\nBladee - October 2025\nUnderscores / Femtanyl / Danny Brown - November 2025\nMarietta/absib/snowing - May 2026\n\nUpcoming Concerts\n\nJane Remover - June 16th 2026\nUnderscores - June 26th 2026\nAsian Glow/What is your name? - June 30th 2026",
+                    tag: "list"
+                },
+                {
+                    date: "01/24/25",
+                    title: "estrogen",
+                    body: "estradiol enanthate - around 7 mg every 7 days\n\n1/24/25 left beabadoobee beatopia\n\n1/31/25 right more beabadoobee\n\n2/7/25 left girlfriend vit th\n\n2/14/25 right porter cover Fontaine dc favorite life\n\n2/21/25 left star shopping Lil peep and die trying drake\n\n2/28/25 right i fell in love with princess peach hot mulligan\n\n3/7/25 left falling apart slow pulp blood\n\n3/14/25 right cry the sundays\n\n3/21/25 left matsuri susquatch\n\n3/28/25 right monster adventure time\n\n4/4/25 left one last kiss and beautiful world hikaru utada and PGE stream\n\n4/11/25 right channel 2 slow pulp blood\n\n4/18/25 left sleep apnea beach fossils piano cleanest one yet\n\n4/25/25 right crush, afraid - 2hollis\n\n5/2/25 left Jupiter music and one in a million - bladee\n\n5/9/25 right 4 of Kara's Walk home songs painless\n\n5/16/25 left Midwest emo, lithonia, and talk beabadoobee\n\n5/23/25 right wooden girl jonatan leandoer96\n\n5/30/25 left crush, cliche - 2hollis, wind tempos - porter robinson\n\n6/6/25 right fine, great - mobo\n\n6/13/25 left IM NOT GOD BUT I WISH I WAS - smokedope2016\n\n6/20/25 right destroy - Tokyo shoegazer + other JP shoegaze\n\nback on pills!! 4 mg - 9/8/25\n\n06/01/26 upped to 8mg",
+                    tag: "misc"
+                },
+                {
+                    date: "12/12/23",
+                    title: "stuff i want to do this winter break",
+                    body: "- watch anime:\n - frieran\n - jjk\n - oregairu\n - Kaguya rewatch + s3\n - Oshi no ko\n - lycorico\n\n- finish P5R\n- go outside with friends and drive places. go out and eat maybe.",
+                    tag: "list"
+                },
+                {
+                    date: "01/10/22",
+                    title: "THE SOS BRIGADE 'THINGS-TO-DO-OVER-THE-SUMMER-OR-ELSE-WE-WILL-BE-STUCK-IN-AN-ENDLESS-LOOP' LIST",
+                    body: "Insect Hunting\nSwimming\nGoldfish Hunting\nFestival (The Bon Dance)\nShokugeki (Food Wars)\nStargazing\nSummer camp\nBaseball Team\nBand\nSlumber Party\n\nCOMPLETED\n\nKaraoke\nCamping\nOvernight Trip (Remote Island) (Murder Mystery)\nWatch movie\nFireworks\nPart-time job\nWatch anime\nDo Summer Homework together",
+                    tag: "list"
+                },
+                {
+                    date: "12/16/24",
+                    title: "my most favorite dream",
+                    body: "I had a dream about ████\nwe went on a date\nwe went to eat and beach and shopping\nwe stole cars and I drove a big van green\nI went to go look for a scarf and heys didn't have any and I made her wait\nI jaywalked and ran across the street to get to her\nI woke up\nit was nice",
+                    tag: "dream"
+                },
+                {
+                    date: "12/09/24",
+                    title: "dream 12/09/24",
+                    body: "I had a dream ████ invited me to play valorant with everyone and I was so happy",
+                    tag: "dream"
+                },
+                {
+                    date: "12/19/24",
+                    title: "bath dream",
+                    body: "I had a dream I took a bath and posted it on twitter it was this whole thing it's so weird to explain I don't even want to try I just remember ██ retweeting it and ████ replying",
+                    tag: "dream"
+                },
+                {
+                    date: "12/21/24",
+                    title: "christmas shopping list",
+                    body: "eggnog\ncookie dough\nChristmas cookie dough\ndiet coke / diet soda\nfishing license?\napron?\nplushie/gift",
+                    tag: "list"
+                },
+                {
+                    date: "12/01/24",
+                    title: "dream 12/01/24",
+                    body: "i had a nightmare about smile or something and then I was stuck laying down and couldn't communicate or move but I was still awake and trying to communicate and it was so scary and my family just ignored me and acted like everything was normal",
+                    tag: "dream"
+                },
+                {
+                    date: "12/04/24",
+                    title: "dream 12/04/24",
+                    body: "I was on a cruise ship / submarine and they were playing a show and we couldn't leave. my friends were all there but they left me and then I woke up.",
+                    tag: "dream"
+                },
+                {
+                    date: "11/26/24",
+                    title: "gamba",
+                    body: "-25 bj █████\n-3 bj █████\n-12 █████bj+13\n+8 █████ bj\n\ndown 32",
+                    tag: "misc"
+                },
+                {
+                    date: "11/15/24",
+                    title: "dream abt oomfs 11/15/24",
+                    body: "I dreamed about ████ and ██. we were somewhere doing something. I can't remember. I think I was third wheeling. there were some random other people I don't know. I don't think I liked the dream very much though.",
+                    tag: "dream"
+                },
+                {
+                    date: "11/01/24",
+                    title: "dream 11/01/24",
+                    body: "I had a dream I was playing golf with a girl and a guy and █████.",
+                    tag: "dream"
+                },
+                {
+                    date: "10/28/24",
+                    title: "dream about best friend",
+                    body: "I had a dream about ██████ where we saw each other and he was so mean to me I cried so much. we met each other and I was excited and we got in the car and I was asking him questions and he went on a rant about why I'm a bad friend or something bad it just broke my heart.",
+                    tag: "dream"
+                },
+                {
+                    date: "10/26/24",
+                    title: "dream 10/26/24",
+                    body: "I had a dream me and ████ were playing Minecraft",
+                    tag: "dream"
+                },
+                {
+                    date: "10/05/24",
+                    title: "dream 10/05/24",
+                    body: "I had a dream that we were at a hotel and that hotel had a casino. similar to the one at fanime. I was gambling with my cousins and yeah we just gambled the whole time. and then we were in our hotel room which was a suite I think and ████ oomf was there. she laid down behind a couch and we left to do something but I completely forgot about her and she called me and she got really mad at me. I was really sad and yeah. there was more but I forgot.",
+                    tag: "dream"
+                },
+                {
+                    date: "10/01/24",
+                    title: "dream 10/01/24",
+                    body: "I had a dream I was with my family and we were all racing to get home. my dad took a car my mom took. a Tesla my brother took and the bus and I had a shopping cart. I was going super fast and last the bus and there were a lot of cops and car crashes ahead. idek who won I woke up before it ended. ",
+                    tag: "dream"
+                },      
+                {
+                    date: "09/21/24",
+                    title: "dream 09/21/24",
+                    body: "I had a dream about basketball. I forgot what. then I had a dream about ████. she was on twitter and someone confessed to her or something idek. I hated it.",
+                    tag: "dream"
+                },
+                {
+                    date: "09/18/24",
+                    title: "dream 09/18/24",
+                    body: "I had a dream it was ████ and my friends and we were on icebox itl and we had to drive across the world or something and we went down to tube but I had to reyna blind and Phoenix ulted up nest on a but no one shot him as I was sova ulting and yeah. there was more to this dream but I forgot. it was a short nap but gosh I feel so weird now wtf.",
+                    tag: "dream"
+                },     
+                {
+                    date: "09/15/24",
+                    title: "dream 09/15/24",
+                    body: "l g\nhad a dream me and █████ and other people were at this Anna doned strkp mall where I buy trading cards and it's kinda like a Roblox obby and we were getting sushi at a food court and elton had glasses on like Anna and he was studying and there was those Mexican chips and yeah",
+                    tag: "dream"
+                },     
+                {
+                    date: "09/17/24",
+                    title: "dream 09/17/24",
+                    body: "I had a dream me and █████. we're in ███████'s class and playing osu on a projector and ███████'s walked in and saw and ton tried playing it offjkr it was math or sometbingn",
+                    tag: "dream"
+                },     
+                {
+                    date: "09/11/24",
+                    title: "dream 09/11/24",
+                    body: "i had a dream I wass playing Minecraft with. Vietnam vet and ██████ and anothwr friend or cousin and I was showing them my world. ██████. my world had rooms and sheep farm and we were going around changing the signs with sharpie. there was a room for me and ██████ and the veg said he didn't like war. maybe chef ████ but he was nice idk.",
+                    tag: "dream"
+                },     
+                {
+                    date: "09/14/24",
+                    title: "drinks",
+                    body: "4 shots\n5 shots\n7 shots\n11 shots 2 seletezers",
+                    tag: "misc"
+                },     
+                {
+                    date: "09/09/24",
+                    title: "dream 09/09/24",
+                    body: "I dreamt about ████ again. fricj I can't remember it.",
+                    tag: "dream"
+                },     
+                {
+                    date: "09/02/24",
+                    title: "dream 09/02/24",
+                    body: "I had a dream about ████. I can't remember it anymore. whatever.",
+                    tag: "dream"
+                },     
+                {
+                    date: "09/03/24",
+                    title: "dream 09/03/24",
+                    body: "I had a dream I was at a Airbnb with my cousins and we were playing tft. we had to leave so I won by default. then I couldn't find my laptop but I found it. there were superpowers or something maybe it was a apocalypse. I was trying to hide my irl yuumi for some reason idek. so weird.",
+                    tag: "dream"
+                },     
+                {
+                    date: "08/27/24",
+                    title: "dream 08/27/24",
+                    body: "I had a dream me and my friends were all the avengers and we were stopping someone and someone was the hulk and they were doing a lot. and we were in some big arena before it reminded me of xianzhoh in honkai and █████ was playing volleyball. and ████ was streamjng and they had 40 viewers and they were playing with friends and I got jealous.",
+                    tag: "dream"
+                },     
+                {
+                    date: "08/31/24",
+                    title: "xqc dream",
+                    body: "I dreamed about xqc. he had 30k viewers but his chat was so slow. good memories.",
+                    tag: "dream"
+                },     
+                {
+                    date: "08/03/24",
+                    title: "dream 08/03/24",
+                    body: "I had a dream I was at a night market buying stuff there was ████████ and a go pro stick and clothes with rezero but it didn't fit me and █████ was there and yeah ",
+                    tag: "dream"
+                },     
+                {
+                    date: "08/01/24",
+                    title: "dream 08/01/24",
+                    body: "I had a dream about the Airbnb again and ████ was there and I got no sleep. I messaged ████ while we were outside and walking around about how I would pay back my debt. I made a typo and later at the Airbnb she messaged me. the typo was like I love you or something and she messaged me saying her girlfriend was the only one for her. I messaged her saying it was a typo and sorry and that I would pay back the debt and I accidentally leaked my real name. ",
+                    tag: "dream"
+                },     
+                {
+                    date: "07/10/24",
+                    title: "dream 07/10/24",
+                    body: "I had a dream about this old discord server I was in. The Sugar Pine 7 one. and that ███ was there. my oomf. they needed money but they were nice. it felt real. and then someone was saying they're sorry for cheating and that they can't stop cheating. idk.",
+                    tag: "dream"
+                },     
+                {
+                    date: "07/24/24",
+                    title: "in n out orders",
+                    body: "██████ - 3 protein style Double Double with pickles\n██████ - Fries coke\n████ - cheeseburger animal fries coke\n█████ - double double fries and a pink lemonade\n███████ - cheeseburger with no spread with grilled onions\nvivi - double double animal style, well done fries animal style\n\n██████ - 29\n██████ - 16\n████ - 22\n█████ - 22\n███ - 8",
+                    tag: "misc"
+                },     
+                {
+                    date: "05/24/24",
+                    title: "dream 05/24/24",
+                    body: "I had a dream that I was in some world with my family. it was like the Australian outback but more fantasy. we were in some desert/cave/swamp and I got super messed up. like worts all over my body and fear of death and everything but we made it back before I died. it was scary.",
+                    tag: "dream"
+                },     
+                {
+                    date: "06/11/24",
+                    title: "FEED FISH SCHEDULE",
+                    body: "every night at around 8 pm - big fish tank turn on lights with remote control, give them 2 scoops of fish food\n\nsmall fish tank - light switch at bottom it's a button\ngive them one small scoop",
+                    tag: "misc"
+                },     
+                {
+                    date: "06/28/24",
+                    title: "dream 06/28/24",
+                    body: "I had this reoccurring dream again where I was in a mental hospital with some oomfs. ███, ███, some others I forgot. there was for some reason a bear too that was chasing me and yeah that was weird. something about a bento box too. idk.",
+                    tag: "dream"
+                },     
+                {
+                    date: "05/23/24",
+                    title: "note 2 myself",
+                    body: "I skipped class today may 22nd Wednesday in case ur wondering why there's a gap in ur memory",
+                    tag: "journal"
+                },     
+                {
+                    date: "05/04/24",
+                    title: "2nd time getting high",
+                    body: "I'm so fucked up it's like last time but worse. I can't feel my mouth I feel like it's bleeding.\n\nI thought I'd feel it less but it's so much worse. my mouth and lips are numb and feel like it hurts. I regret it I can't talk to ██████.nkkkkdneuehe s dbxbx",
+                    tag: "journal"
+                },     
+                {
+                    date: "04/20/24",
+                    title: "dream 04/20/24",
+                    body: "I had a dream me and my friends went on a trip. it was me ██████ █████ and ██████. we were at school and I was making everyone laugh. It was ████'s class. we were listening to k- pop boy bands. zb1 in bloom to be exact. they had a one piece anime op in this dream. ██████ told me a story about how when he was one he was denied food for some reason at a pre school. before that we were at █████s classroom. I was being really funny in ████'s classroom and ██████ from middle school said why is she taking all the attention but when I do it everyone hates me and i said it's because I'm funny or something. yeah that was the dream. it's 11 pm rn.\nI slept from 2-11 this shitty sleep schedule stinks.",
+                    tag: "dream"
+                },     
+                {
+                    date: "04/22/24",
+                    title: "dream 04/22/24",
+                    body: "I had a dream me and a friend walked around a college campus. I forgot which friend it was. maybe ██████. they were chill. it might have been a foreign country because we had to exchange our currency but while we were doing it it broke because we exchanged a lot of Viet dong. the lady managing the machine got really mad at us. we saw Sergio Perez. we went to a food truck and ███████ was working there and she was talking about someone with social anxiety ordering and making an exception for them. we walked around more and there were luxury cars and maybe frank oceans car. I think we had to cross a bridge or something. it might have been the xianzhou luofu now that I think about it. I wish I could remember these dreams better like lily.",
+                    tag: "dream"
+                },     
+                {
+                    date: "04/18/24",
+                    title: "dream 04/18/24",
+                    body: "I just had a weird dream. it was with my friends. I just went to Berkeley with them so it would make sense I dreamed about them. I can't remember anymore. I need to make this more of habit. something about a parking ticket maybe idk. yeah. dreammmm.",
+                    tag: "dream"
+                }, 
+                {
+                    date: "04/09/24",
+                    title: "rite aid",
+                    body: "deodorant antiperspirant spray\nconcert earbuds\npink monster",
+                    tag: "list"
+                },
+                {
+                    date: "04/08/24",
+                    title: "Miku expo merch",
+                    body: "Glow stick - $40\n2 stickers - $6\nComic Poster - $10\nGET acrylic stand - $20\nwallscroll\n\nTotal: $76\n\nTotal w/o glowstick: $56",
+                    tag: "list"
+                },
+                {
+                    date: "03/10/24",
+                    title: "first time getting high",
+                    body: "ok I just took edibles for the first time and holy shit I can't stop laughing. I literally went into the biggest laughing fit ever and\n\nto a sober person these people would seem absolutely crazy. I feel crazy tbh. it's surreal. I feel out of body.\n\nI just say what I'm thinking and nothing feels real.\n\nwhat the fuck is happening.\n\nit feels like a dream.\n\nwtfff\n\nI don't think I just do when I usually overthink.\n\nI'm too focused on my phone or feels like.\n\n██████ is going to get door dash rn this is now a diary don't tweet this.\n\nI feel so light like I'm not a real person\n\nI can't focus on one thing I thought the opposite was supposed to happen\n\nnow I'm paranoid and feel like I'm seeing hallucinations\n\nnothing still feels real.\n\ndreamlike.\n\nI didn't think edibles feel like this. I thought it would be normal except I'm more chill but it didn't happen. I thought it was supposed to cure ADHD.\n\nI still feel logical but just so weird. no it's more like there is a logical part of me that only comes out when I want it to as if\n\nI can't focus on writing this my eyes unfocused. don't drive while high. so weird\n\nI have to snap to stay in focus and think\n\n█████ seems like such an adult figure like he is old and wise. he's so calm. he's also chill.\n\nI'm numb around my nose so I can't feel if I have boogers or not I probably don't. it brings out all ur worst anxieties I think.\n\nI figured it out it's becuSe it was THC and CBD was the onr that calms u down.\n\nI feel ok not euphoric just ok idk if I like it or not. also don't feel munchies.\n\nhow is this will ferrel movie a real movie it feels so fake and dumb\n\nhonestly this is not a positive or negative experience. I feel like I can't think logically but it also feels good not to. care and to forget. I'm feel philosophical. plug a little philosophical but she chill. it does help with sleep.\n\nwill I regret this when I eaur up. and find these notes weird idk\n\nGoogle autocorrect is so good. it's predicting me.\n\nI eep goodnight.",
+                    tag: "journal"
+                },
+                {
+                    date: "02/20/24",
+                    title: "dream 02/20/24",
+                    body: "I had a dream me and my friends went to a amusement park 2 years ago. we were a big party so we entered this sudden death tournament where it was kinda bungee jumping indoors and whoever could last the longest wins. it ended early because when it was ██████'s turn he refused and didn't play so we ended up playing smash ultimate. ██████ lost again and then ██████ played against █████. after the outing ██████ tweeted that it was islamphobic that he lost and that his Islam got revoked after the day or something. then we were playing Valorant on lotus and we lost because ██████ was afk.",
+                    tag: "dream"
+                },
+                {
+                    date: "03/01/24",
+                    title: "spongebob rp dream",
+                    body: "I had a dream me and my friends were plHing this SpongeBob roleplaying game where we were all SpongeBob characters and one person was a cat who ran away and we had to find out who it was. it was me and I was SpongeBob.",
+                    tag: "dream"
+                },    
+                {
+                    date: "02/18/24",
+                    title: "dream 02/18/24",
+                    body: "I had a dream I snuck into this interactive museum / arcade in Vegas and played games with strangers ",
+                    tag: "dream"
+                },
+                {
+                    date: "02/04/24",
+                    title: "dream 02/04/24",
+                    body: "I had a dream me and my friends were all playing modded MC and I died a lot but it was fun.",
+                    tag: "dream"
+                },
+                {
+                    date: "02/09/24",
+                    title: "dream 02/09/24",
+                    body: "I had a dream I was playing Valorant duoq rank with someone and I fit a 1v5 ace clutch ",
+                    tag: "dream"
+                },
+                {
+                    date: "02/17/24",
+                    title: "that one dream where i get robbed",
+                    body: "I had a dream that ██████ was robbing me and some other people secretly. it starts that I'm on the streets and someone approaches me to do a drug deal. I say sure and we all are walking to this place when ██████ walks up behind me with a gun and a giant piece of highway metal barrier and says don't say anything. I say to some bystanders that we've walked 20 miles and everything but they don't care. we walk into the building and ██████ shoots the first person but I run to the exit which is a weird staircase that is super small. I go down and she follows me and then I woke up because it was scary.",
+                    tag: "dream"
+                },
+                {
+                    date: "02/03/24",
+                    title: "dream 02/03/24",
+                    body: "I had a dream we were all at some party and all my friends were there. something big happened like some controversy but I can't remember what it was. oh no I forgot everything. I'm sorry.",
+                    tag: "dream"
+                },
+                {
+                    date: "01/23/24",
+                    title: "wordle battle royale dream",
+                    body: "I dreamed we were in a irl battle Royale last man standing wins challenge where we have to kill each other to the death to win. all of my friends were there. I won by stabbing people, shooting people, every worldle was a name that killed people and yeah. it was dumb and scary I didn't like it. it was at someone's houseml.",
+                    tag: "dream"
+                },
+                {
+                    date: "01/26/24",
+                    title: "dream 01/26/24",
+                    body: "I had a dream I was on vacation with my family along with their friends. there was this one girl her name was ███ and we went on the vacation together. first we drove together to the place which was a motel/lodge. and then when we checked in we got a room together and got the keys. then we went to find the room but we got lost and we got the wrong keys. one of the other families went to us to get their keys back and told us how to look for it but when I was looking for his key he called me stupid because I was looking for it wrong and I just walked off. we finally found our room and we laid on the bed and watched television which was cooking moments or something. there was this guy and he ate peppers eel or something yeah.",
+                    tag: "dream"
+                },
+                {
+                    date: "01/02/24",
+                    title: "dream 01/02/24",
+                    body: "I had a dream I was in GTA rp but it felt reaL and I was apart of a gang and I was a really good fighter and j beat a lot of ppl up. ",
+                    tag: "dream"
+                },
+                {
+                    date: "01/04/24",
+                    title: "dream 01/04/24",
+                    body: "i had a dream I was interviewing / interrogating some guy named Travis and he was big. I was with ███████ and someone else who was also interviewing him. he was annoying. they mentioned beabadoobe.",
+                    tag: "dream"
+                },
+                {
+                    date: "01/13/24",
+                    title: "dream 01/13/24",
+                    body: "i dreamed I was a really bad driver and that I was driving my friend ███████ and this girl we hadn't seen in a really long time named ███████ ███. shes also in my Japanese class but now but it's not the same one. I almost crashed multiple times. and then I took them on my bike where we went really fast and also almost crashed and it was tall so we got stuck a lot. then we met up with all our windmill friends for a reunion to eat kbbq. █████ was there and he talks a lot like always.",
+                    tag: "dream"
+                },
+                {
+                    date: "12/18/23",
+                    title: "dream 12/18/23",
+                    body: "I dreamed that I was hitting balls with a bat (baseball) in █████'s house with my cousin █████. then we watched football together.",
+                    tag: "dream"
+                },
+                {
+                    date: "12/22/23",
+                    title: "date with ███ (dream)",
+                    body: "I had a dream I went to the dev awards game show with ███. it was like a date. before we were at like a convention and this guy who worked at the army showed me a Lambo urus with army paint and then he followed to the ticket line for the event where I met up with ███. ███████ was there too I think but he didn't go in with me and ███. only me and ███ went in. ███ looked really pretty and all dressed up. kinda like navia. we had seats that were really close to the show that I remember buying. she seemed really nervous and not talkative. we went in and ktwon Sam's gf was on stage. she said Sam's not here and ███ replied im here. I yelled to KT our little kitten is here and ███ looked embarrassed. we walked down and I sat in the wrong seat. 2 men were waiting for us and one said coke? and I said lemonade even though it was something else that was yellow. we sat down and ███ said she was hungry and asked if I wanted food. I told her I'll eat some of hers and she said ok and my dad appeared and said something like yeah that's good. the award show started and I woke up.",
+                    tag: "dream"
+                },
+                {
+                    date: "10/06/23",
+                    title: "dream 10/06/23",
+                    body: "just had a dream that I leaked my face in a Livestream on YouTube. I went live on accident and I had a camera angle that showed my face. people laughed at me in the comments. I tried deleting the vod but I couldn't.",
+                    tag: "dream"
+                },
+                {
+                    date: "11/01/23",
+                    title: "dream abt oomf 11/01/23",
+                    body: "I dreamed about ████. I dreamed that they made a controversial tweet and people were mad in the replies and I thought she was going to kill herself but she was fine in the end and had a good attitude about it.",
+                    tag: "dream"
+                },
+                {
+                    date: "12/13/23",
+                    title: "dream 12/13/23 2pm",
+                    body: "I had dream that me and all of my irl friends were at a party. I forgot what happened but I parked my car in a parking garage and █████ parked his car next to mine but it was blocking the drivers side door. some old white lady called the non emergency police line and they towed █████ car and I called █████ to let him know.",
+                    tag: "dream"
+                },
+                {
+                    date: "08/07/23",
+                    title: "dream 08/07/23",
+                    body: "I just dreamed that ███ took my spot in a Valorant 5 stack. and about ███████ and ████████. and ████ and aomeone. idk.",
+                    tag: "dream"
+                },
+                {
+                    date: "06/08/26",
+                    title: "dream about ██████ 06/08/26",
+                    body: "i dont remember much. i remember me and ██████ oomf were on my bed and i think she was talking about something with her laptop open. I  was just next to her looking at the laptop and I fell asleep on her shoulder.",
+                    tag: "dream"
+                },
+                {
+                    date: "07/24/23",
+                    title: "reading 'I had that same dream again'",
+                    body: "alright so its currently 4 am vietnam time/2 pm PST on July 25th, 2023. i am currently on a plane that departed from Taipei, Taiwan and is headed to San Francisco airport. We are roughly 6 hours away and i am currently at 31 percent battery charge. not looking too good. anyways i just finished reading 10 chapters of a manga I downloaded and have been meaning to read since forever.\n\nThe manga is called 'I had that same dream again.' Some backstory to how I came across it is through MyAnimeList! I had just finished reading 3 Days of Happiness (such a good manga) and I was looking at the reccomended/similar manga sections that MAL has for manga and I came across this one. the synopsis looked super interesting and the art looked cute so I added it to my plan to watch, but didn't end up reading it until longer than a year later i guess? i read 3 days of happiness near the end of my junior year and now I'm heading to college... time flies.\n\ncoincidentally this also ties into the manga because that's kind of what it's about! so to give a quick, but also SPOILER FILLED synopsis (also t/w self harm). basically, a 4th grade girl goes with a black cat and she has no friends at school and she is kinda a smartass. anyways she goes with this black cat to her 3 real friends. the first one we meet is a adult women in her 20-30s and she's a prostitute. the next is a old granny who makes her snacks. and the last is a teenage high schooler who cuts herself and writes stories. well big spoilers ALL OF THESE FRIENDS ARE HER. yeah I realized a little early maybe but still in the same chapter it got revealed so I'm glad that I didn't get omega spoiled early. anyways the manga has been really good and I've really enjoyed it. cried lots of tears but I do want to talk about my favorite part.\n\nMy favorite part has to be Minami-san's small yet REALLY influential arc. for those who don't know Minami is the high school girl who cuts her wrists. It's probably because most recently I too was a high school person and I'm still a teenager. I also was lonely, alone, and liked to write. never harmed myself intentionally though, but I have dealt with depression although that's not to say that self-harm is the same thing. anyways it just felt all very relatable and it hit me the hardest. especially the stuff with her parents and ahhh it just hit so hard. such a good arc imo i love Minami she is too cute. I was so sad when she just disappeared but I get it now.\n\nanyways now there's a romance thing which I find out of the blue and out of nowhere but it's fine. i sorta get it. I just needed a break from reading, but I'll get back to it. OH and also I've been listening to Ichika Nito the whole timr and it is perfect reading music. anyways hopefully we get home soon idk hiw much longer I can stand being in this plane seriously. uhh yeah going to finish it now and there was another manga similar to this and 3 days of happiness I think but I didn't download it I don't think. OH also Minami kinda reminded me of my cousin █████. uhhh idk what else I was going to say. I REMEMWVER I was going to write a diary about my time in Vietnam ill try to remember everything ok bye!\n\nah forgot it was only 12 chapters. 2 chapters later and 20 minutes passing and im back. really good manga but im veryyy confused i will search up what just happened when I get home, but i really enjoyed it. ok I should try to get some sleep and wait for my parents to awake so I can charge my phone. hopefully i sleep until the plane lands 🙏goodnight.",
+                    tag: "journal"
+                },
+                {
+                    date: "07/24/23",
+                    title: "movie im watching on plane at taiwan",
+                    body: "the three sisters of tenmasou inn\n\nstopped 102 minutes in continue at home pls\n\nim reading i had that same dream again now",
+                    tag: "journal"
+                },
+                {
+                    date: "07/14/23",
+                    title: "video ideas",
+                    body: "Sakur being an absolute weeb for _ minutes\n\nclip from fearless kkura\njjk clip\nclip where she talks about spy x family\nother clips idk",
+                    tag: "list"
+                },
+                {
+                    date: "06/19/23",
+                    title: "anime on plane",
+                    body: "violet evergarden\ncyberpunk edge runners\nkotaro lives alone",
+                    tag: "misc"
+                },
+                {
+                    date: "07/07/23",
+                    title: "TWEET",
+                    body: "I've been wanting to tweet out random things about my vacation for the past week, but I don't want to spam people's timelines now that people actually perceive my tweets.\n\nso I decided to make this a thread of random stuff I've been thinking about.\n\nstarting with Sakura Miyazaki!\n\nI know I'm supposed to be on vacation, but I've just been inside watching idol videos all day. Recently I've been obsessed with an idol named Sakura Miyazaki! She's part of Le Serrafim, but she was apart of AKB48  before! she's so funny & cute I've been watching her show all day.\n\nrecently I've found myself getting back into K-pop (bc of Sakura) and along with that I've also found a desire to dance to it again. back in middle school I used to dance to K-pop and it was so much fun. one of the things that you don't know how good you have it until it's gone.\n\ndancing on stage with a crowd was so fun and is such a fun memory I will never forget it. it's an amazing feeling.\n\nprobably don't have anymore irl friends that would be willing to dance with me so I'll be alone dancing in my room if I ever do decide to practice.\n\nOH AND HAVE I SHOWN YOU GUYS MY LE SSERAFIM CD I BOUGHT A WHILE AGO? I think I was going to post it but I decided against it for some reason (like I do with many tweets)\n\nit's the pink ver of their Japanese EP!\n\nalso got a photo card of Sakura & Kazuha & it's so cute!!!",
+                    tag: "journal"
+                },
+                {
+                    date: "07/05/23",
+                    title: "thoughts so far",
+                    body: "I made a threads account!\n\nI arrived in Da Nang which is where my mom was born. I met my grandpa and uncles and aunts, but I also met my cousin who last time I saw was so \n\nmy cousins are cool\n\nI've just been watching Sakura Miyazaki from Le Sserafim's content. she has a little show called Fearless Kura and it's actually been really fun to watch.\n\nI wrote something in my notes last night, but it didn't save TT now I'm trying to remember what it was...\n\noh I got a massage yesterday and it was painful, but I think it was good too? not too sure.",
+                    tag: "journal"
+                },
+                {
+                    date: "06/28/23",
+                    title: "thoughts on plane 6/28/23",
+                    body: "When the steamdeck released I thought it was stupid because why wouldn't you just get a PC to play games on steam. I also didn't really play any single player games on Steam, but now I understand the hype over the steamdeck. I would kill for one right now to play Persona ahhh it's all I can think about.\n\nI just finished watching the new Grand Tour episode and it was super funny.\n\nI'm listening to the Trash Taste boys talk about anime and random stuff. First of all this is really entertaining I'm so glad I randomly decided to download a podcast. Second of all this makes me want to watch anime again, but I have some weird affinity against watching anime so whatever. I probably should've watched an anime on the flight but I like being immersed. I think it's just an excuse though idk. bleh whatever I'll watch anime after I finish persona when I get home maybe.\n\nI'm really uncomfortable there's no leg space :/\n\nthe flight attendants are so cute. one has her hair in a bob I think it's called and it's really cute I want hair like that ><\n\nthe food is pretty good I love manufactured food for some reason, but I can't eat anymore or else I think I'll die.\n\nI CHECKED THE MUSIC THING ON THE LITTLE SCREENS AND THEY HAVE SO MANY GOOD ARTISTS. they have that one Fuji Kaze album, The green Yoasobi album, one of the LiSa albums, AND THEY HAVE THE JAPANESE TWICE ALBUM WITH THAT SONG KURA KURA. If I didn't download music I'd be pretty satisfied with this collection of music. There's no anime in the thing though just detective Conan and some other Chinese animes I think. oh and Tom and Jerry. I watched an episode without audio with Chinese subtitles and it was still good.\n\nI'm listening to twice as we land because of Tzuyu hehe\n\nthe airport is so pretty I love the Taiwanese decorations they're so cute. I would take pictures if I wasn't with family.",
+                    tag: "journal"
+                },
+                {
+                    date: "05/04/23",
+                    title: "first ever dream i wrote down (egg dream)",
+                    body: "LilyPichu does this thing where she writes down her dreams on her notes and posts them on Twitter and I wanted to start doing it too, but I always forget my dreams. this time I remembered it though! It's a reoccurring dream, but I constantly have dreams where I'm a trans girl. like mtf and everything. In this dream I was at the mall and I was in a goth fit with a cute black skirt. I was meeting up with my irls who don't know about my transition. I timidly walked up to them and a girl I know irl (we'll call her Mashiro) she said hey do you need anything because didn't recognize me and then I stuttered, got super anxious, and then ran away. I'm outside the mall now in a little alleyway trying to calm myself down when 3 men try to touch me and sexually assault me. my irls are looking for me and they see me getting assaulted so they yell at the bad guys and they run away. Mashiro comforts me and then I confess who I am while crying and she says it's ok and everyone is surprised. we go into the mall and we all get ice cream and I'm still super anxious like looking down talking timidly and stuttering. I sit with Mashiro and she asks me about makeup and my clothes and we talk about that. later we all go to karaoke and I sing my heart out. I can actually sing really well in this dream and can change my pitch and stuff. and that's the end. weird dream but yeah.",
+                    tag: "dream"
+                },
+                {
+                    date: "01/20/23",
+                    title: "██████'s Birthday",
+                    body: "what to say:\n\nHey ██████\nweird question but\nIs your birthday today...? or soon?\n\nYeah it's my birthday! : Oh happy birthday!! *send Haruhi gif*\n\nHow do you know? : My friends metioned it\n\nMy birthday's next Friday: ah icic\n\nWhy do you ask?: My friends mentioned it to me so yeah",
+                    tag: "misc"
+                },
+                {
+                    date: "11/16/22",
+                    title: "Guitar goals",
+                    body: "Get Yui's Les Paul\nWatch k-on\nLearn God Knows on guitar\nLearn fuwa fuwa time\nGet Bocchi's Yamaha\n\nCompleted:\n\nWatch bocchi",
+                    tag: "list"
+                },
+                {
+                    date: "03/03/22",
+                    title: "86 Part 2",
+                    body: "Before watching episode 11 tell ███████ kun",
+                    tag: "misc"
+                },
+                {
+                    date: "08/02/22",
+                    title: "Tuesday August 2nd plane diary",
+                    body: "This is absolutely important and you must not forget or however the beginning of Bunny girl senpai goes. That's right! I'm on a plane heading home from Aruba and I have been watching bunny girl senpai for the past couple hours. Realistically it's been 2 flights, one from Aruba to Charlotte and the other one from Charlotte to San Francisco! That's the one we're on now. There's no internet but I wanted to tweet so I thought this would suffice. So I just finished episode 11 of Bunny girl senpai and I cannot bring myself to finish it. I'll do that at home because I know the ending is SO emotional. Basically we are on Kaede's arc where she is slowly going outside and she finally did! They go on a trip to the beach with Mai and her sister and they met Kaede's classmate but it's revealed that Kaede has no memories. Wow I completely forgot about that actually. But I literally teared up when Kaede first started going outside and cried. So fricking emotional. I know I would cry a river if I finished the anime. Bunny girl senpai is sooo much better than I remember. Especially all the other arcs are so good. Honestly might be a 9! Um basically that's all I wanted to say. I just had this idea of asking ███████ if he wanted to rewatch the bunny girl senpai movie with me. It's ok if he doesn't but I'ma ask still. Anywayssss this turned out SUPER long. I hope all my friends are having fun on that ooting they went on. I hope I can get home soon. Looks like the internet just came back up. NVM went back out! Well I have not much else to say I'll be back if anything of interest happens!\nSayonara!\n- Sakuta Asagazawa",
+                    tag: "journal"
+                },
+                {
+                    date: "10/11/21",
+                    title: "ASK ███████ ABOUT ROADTRIP 10/11/21 12:11 AM ",
+                    body: "(that means midnight)\nask ███████ about if he would go on a roadtrip with me and my family!",
+                    tag: "misc"
+                },
+                {
+                    date: "12/05/21",
+                    title: "Extra credit book ideas 12/5/21",
+                    body: "10:31 PM\n\nCan use koe no Karachi or I want to eat your pancreas for 10 songs/poems that relate to theme and shit.\nCan use a weeping angel crying and Hitchcock.",
+                    tag: "misc"
+                },
+                {
+                    date: "12/09/21",
+                    title: "12/8-12/9 LilyPichu stream",
+                    body: "First half MapleStory I watched it was good and then miz sesh I skipped not that good\nAnd then really nice just talking about feelings. Came late but the parts I did catch were really good.\n\nIt's 12/9 12:14 AM and lily is doing her outro screen. This strewm was really nice. I love lily and Ima sleep.",
+                    tag: "journal"
+                },
+
+                {
+                    date: "12/19/20",
+                    title: "Osu records",
+                    body: "1000 pp - 12/19/20\n2000 pp - 3/12/21",
+                    tag: "misc"
+                },
+                {
+                    date: "03/03/22",
+                    title: "2/3/21 streams",
+                    body: "Amazing Lilypichu Piano stream. Just super cool.\n\nXqc stream- mc speedruns he's kinda mald it's okay tho\n\nShroud valorant\n\nPoki genshin impact",
+                    tag: "journal"
+                },
+                {
+                    date: "11/27/20",
+                    title: "Sens",
+                    body: "0.32",
+                    tag: "misc"
+                },
+                {
+                    date: "08/07/20",
+                    title: "VALORSNT SENS",
+                    body: "5.44 2000 DPI",
+                    tag: "misc"
+                },
+                {
+                    date: "06/05/20",
+                    title: "Lily streams",
+                    body: "Just late night thoughts im ...\n\nThe late half if Lily's 6/5 streams where she starts singing and playing valorant is very cool. Lots of cool songs . It's 2 am rn. ",
+                    tag: "journal"
+                },
+                {
+                    date: "04/03/20",
+                    title: "Valorant",
+                    body: "Sage equals ███'s best champ\n\nJett looks cool",
+                    tag: "misc"
+                },
+                {
+                    date: "03/17/20",
+                    title: "kaisa build",
+                    body: "Hail of blades\nTaste of blood\n\nManamune\nTier 1 boots\nLudens\nNashors",
+                    tag: "misc"
+                },
+                {
+                    date: "03/02/20",
+                    title: "3/2",
+                    body: "Check under bed for airpod case",
+                    tag: "misc"
+                },
+                {
+                    date: "01/15/20",
+                    title: "thought",
+                    body: "I want to watch silicon valley",
+                    tag: "misc"
+                },
+                {
+                    date: "08/19/19",
+                    title: "Yorushika is amazing",
+                    body: "If I had to choose a song to represent myself it would be Hitchcock by Yorushika. Or Lost ones weeping\n\nListen to Yorushika album and do album review.\nRecord it?\nMaybe.\n\n8/26 Lost ones weeping\n\n8/? Rest\n Before 26",
+                    tag: "misc"
+                },
+                {
+                    date: "08/16/19",
+                    title: "Samples",
+                    body: "Down by the Brook - biosphere\n\nFind out 'Nani sugoi' sample and where it is from\n\n8/16",
+                    tag: "misc"
+                },
+                {
+                    date: "11/14/24",
+                    title: "lock screen",
+                    body: "this is my screen lock no bottom row I legit just spent  10 years trying to remember it",
+                    tag: "misc",
+                    img: "https://madoka.nekoweb.org/lock%20screen.png"
+                },
+                {
+                    date: "05/23/24",
+                    title: "fanime shopping list",
+                    body: "ringo 1713 - Honda super cub print limited and bocchi stickers and jet tag\nHitsu 1007 - sparkle charm $15\nmoorina 1213 - firefly charm, bocchi and firefly sticker $25\n\ntotal: $40\n\nmaybe wheatloaces 1306\n1605",
+                    tag: "list",
+                    img: "https://madoka.nekoweb.org/fanime%202024%20map.jpg"
+                },
+                {
+                    date: "09/19/24",
+                    title: "dream 9/19/24",
+                    body: "I just had a dream that my dad asked me if hotel ████ was a girl or boy and that I said boy and then he yelled at me because I've been referring to ████ as a girl and then he asked me about like whether they were masked or something and then I just got so mad and I woke up now",
+                    tag: "dream"
+                },
+                {
+                    date: "09/06/24",
+                    title: "dream again",
+                    body: "I dreamt about ████ again. we played valorant. we just had an argument so this hurts. fuck I wish I didn't wake up.",
+                    tag: "dream"
+                },
+                {
+                    date: "07/07/20",
+                    title: "GeForce gtx 680",
+                    body: "This is my graphics card",
+                    tag: "misc"
+                },
+                {
+                    date: "06/15/20",
+                    title: "Valorant sens",
+                    body: "Valorant sense\n\n0.894",
+                    tag: "misc"
+                },
+            ];
+
+            let recentHistory = [];
+            let currentFilter = "all";
+
+            function getFiltered() {
+                return currentFilter === "all" ? notes : notes.filter(n => n.tag === currentFilter);
+            }
+
+            function setFilter(tag) {
+                currentFilter = tag;
+                recentHistory = [];
+
+                document.querySelectorAll("#filter-buttons button").forEach(btn => {
+                    btn.classList.toggle("active", btn.textContent === tag);
+                });
+
+                const filtered = getFiltered();
+                const noResults = document.getElementById("no-results");
+                const rerollBtn = document.getElementById("reroll-btn");
+
+                if (filtered.length === 0) {
+                    noResults.style.display = "block";
+                    rerollBtn.style.display = "none";
+                    document.getElementById("note-date").textContent = "";
+                    document.getElementById("note-title").textContent = "";
+                    document.getElementById("note-body").innerHTML = "";
+                } else {
+                    noResults.style.display = "none";
+                    rerollBtn.style.display = "inline";
+                    reroll();
+                }
+
+                updateCounter();
+            }
+
+            function updateCounter() {
+                const filtered = getFiltered();
+                const total = notes.length;
+                const showing = filtered.length;
+                document.getElementById("note-counter").textContent =
+                    currentFilter === "all"
+                        ? total + " notes"
+                        : showing + " / " + total + " notes";
+            }
+
+            function reroll() {
+                const filtered = getFiltered();
+                if (filtered.length === 0) return;
+
+                const historySize = Math.min(13, filtered.length - 1);
+                let idx;
+                do { idx = Math.floor(Math.random() * filtered.length); } while (recentHistory.slice(-historySize).includes(idx));
+
+                recentHistory.push(idx);
+                if (recentHistory.length > 13) recentHistory.shift();
+
+                const n = filtered[idx];
+                document.getElementById("note-date").textContent = n.date;
+                document.getElementById("note-title").textContent = n.title;
+                document.getElementById("note-body").innerHTML = n.body.replaceAll("\n", "<br>");
+                const img = document.getElementById("note-img");
+                if (n.img) {
+                    img.src = n.img;
+                    img.style.display = "block";
+                } else {
+                    img.src = "";
+                    img.style.display = "none";
+                }
+                            }
+
+            reroll();
+            updateCounter();
+        </script>
+
+    </body>
+</html>

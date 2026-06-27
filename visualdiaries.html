@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css">
+        <title>vivis visual diaries</title>
+        <style>
+            main {
+            width: 100%;
+            max-width: 100%;
+            margin-left: 0;
+            margin-bottom: 50px;
+            }
+            main h1 {
+            margin-top: -5px;
+            text-align: center;
+            color: #fddcff;
+            }
+            main h2 {
+            color: #f1bcf7;
+            }
+            #container a {
+            color: #e884f5;
+            }
+            #leftSidebar a {
+            font-weight: bold;
+            color: #d835a7;
+            }
+            #leftSidebar {
+            position: fixed !important;
+            }
+            p {
+            color: #fddcff;
+            }
+            .video-container {
+                display: flex;
+                gap: 10px;
+                margin-top: 20px;
+            }
+            .video-container video {
+                width: 50%;
+            }
+            .video-labels {
+                display: flex;
+            }
+            .video-labels div {
+                width: 50%;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+            <aside id="leftSidebar" style="margin-right: 10px;">
+                <img src="https://madoka.nekoweb.org/madoka%20cat%20meow.jpg" alt="Madoka Cat">
+                <a href="https://madoka.nekoweb.org" target="_blank" style="display: block; margin-left:55px;">home</a>
+                <h2>check out more of my life:</h2>
+                <ul>
+                    <li><a href="https://madoka.nekoweb.org/photos.html" target="_blank">photos</a></li>
+                    <li><a href="https://madoka.nekoweb.org/blog.html" target="_blank">blog</a></li>
+                    <li><a href="https://madoka.nekoweb.org/notes.html" target="_blank">random notes</a></li>
+                </ul>
+            </aside>
+        
+       <div id="container">
+            <div id="headerArea">
+            </div>
+                
+            <div id="flex">
+
+                <main>
+                    <h1>visual diaries</h1>
+                    <!-- video for the first 3 visual diaries -->
+                    <video controls autoplay muted loop width="600" style="display: block; margin: 0 auto; border: 2px solid #a36d86;">
+                        <source src="https://madoka.nekoweb.org/VISUAL%20DIARIES/wind%20tempos.mp4" 
+                        type="video/mp4">
+                    </video>
+                    <p style = "text-align: center;">my neighborhood - 06/16/2025 <br> <a href ="https://www.youtube.com/watch?v=k45XcsIc0Ow" target="_blank"><small>wind tempos - porter robinson</small></a></p>
+                    
+                    <div class="video-container">
+                    <video controls autoplay muted loop style="border: 2px solid #a36d86;">
+                        <source src="https://madoka.nekoweb.org/VISUAL%20DIARIES/yosemite.mp4" 
+                        type="video/mp4">
+                    </video>
+                    
+                    <video controls autoplay muted loop style="border: 2px solid #a36d86;">
+                        <source src="https://madoka.nekoweb.org/VISUAL%20DIARIES/SF.mp4" 
+                        type="video/mp4">
+                    </video>
+                </div>  
+                
+                <!-- some insane magic code to make it center left n right aligned for the text -->
+                <div class="video-labels">
+                    <div>
+                    <p>yosemite - 08/18/2025 <br> <a href ="https://soundcloud.com/soeski/teenage-dream" target="_blank">
+                    <small>teenage dream cover - unknown</small>
+                        </a>
+                    </p>
+                </div>
+                <div>
+                    <p>sf - 04/23/2025 <br> 
+                        <a href ="https://www.youtube.com/watch?v=SuCYsNERsgA" target="_blank">
+                            <small>jeans - 2hollis</small>
+                        </a> 
+                        <br>
+                        <a href ="https://www.youtube.com/watch?v=LwSdcftoe4o" target="_blank">
+                            <small>KissMeThruDaPhone - lil shine</small>
+                        </a>
+                    </p>
+                    </div>
+                </div>
+                
+                <!-- last 2 visual diaries -->
+                <div class="video-container">
+                    <video controls autoplay muted loop style="border: 2px solid #a36d86;">
+                        <source src="https://madoka.nekoweb.org/VISUAL%20DIARIES/summer2%20yourboyfriendsucks.mp4" 
+                        type="video/mp4">
+                    </video>
+
+                    <video controls autoplay muted loop style="border: 2px solid #a36d86;">
+                        <source src="https://madoka.nekoweb.org/VISUAL%20DIARIES/summer1%20p3.mp4" 
+                        type="video/mp4">
+                    </video>
+                    
+                </div>
+
+                <div class="video-labels">
+                    <div>
+                    <p>glimpse into my summer pt. 2 - 09/06/2024<br> <a href ="https://www.youtube.com/watch?v=z8g6pqqHgWs" target="_blank">
+                    <small>all your secrets - yourboyfriendsucks!</small>
+                        </a> 
+                    </p>
+                </div>
+                <div>
+                    <p>glimpse into my summer pt. 1 - 07/15/2024<br> 
+                        <a href ="https://www.youtube.com/watch?v=j9Sn1nFGQQ8" target="_blank">
+                            <small>color your night - azumi takahashi, lotus juice</small>
+                        </a> 
+                    </p>
+                    </div>
+            </main>
+            </div>
+        </div>
+
+    </body>
+</html>
